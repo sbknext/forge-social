@@ -1,0 +1,17 @@
+{
+  "platforms": {
+    "x": {
+      "daily_cap": 5,
+      "min_delay_sec": 300,
+      "max_delay_sec": 900
+    },
+    "instagram": {
+      "daily_cap": 3,
+      "min_delay_sec": 600,
+      "max_delay_sec": 1800
+    }
+  },
+  "active_hours": [9, 21],
+  "active_tz": "Asia/Kolkata",
+  "skip_weekends": false
+}

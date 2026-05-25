@@ -1,0 +1,29 @@
+# Environment — never commit secrets
+.env*
+!.env.example
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+
+# Chrome profiles (cookies, sessions)
+chrome-profile-*/
+
+# Logs
+*.log
+logs/
+
+# Image uploads inbox
+inbox/
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
