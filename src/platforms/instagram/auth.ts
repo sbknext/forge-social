@@ -10,7 +10,7 @@ export async function isLoggedIn(ctx: BrowserContext): Promise<boolean> {
     await page.waitForTimeout(2000);
 
     const nav = await page.$(IG_SELECTORS.nav);
-    const loginForm = await page.$('input[name="username"]');
+    const loginForm = await page.$('input[name="email"], input[name="username"]');
     return !!nav && !loginForm;
   } catch {
     return false;

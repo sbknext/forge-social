@@ -1,9 +1,9 @@
 // Stable Instagram selectors — aria-label preferred, role fallback
 export const IG_SELECTORS = {
-  // Auth
-  usernameInput: 'input[name="username"]',
-  passwordInput: 'input[name="password"]',
-  loginButton: 'button[type="submit"]',
+  // Auth (verified against live DOM 2026-05-25)
+  usernameInput: 'input[name="email"]',
+  passwordInput: 'input[name="pass"]',
+  loginButton: 'input[type="submit"], button[type="submit"]',
 
   // Logged-in indicators
   nav: 'nav[role="navigation"]',

@@ -1,9 +1,9 @@
 // Stable X (Twitter) selectors — data-testid preferred, aria-label fallback
 export const X_SELECTORS = {
-  // Auth
-  loginInput: 'input[autocomplete="username"]',
-  passwordInput: 'input[autocomplete="current-password"]',
-  loginButton: 'button[data-testid="LoginForm_Login_Button"]',
+  // Auth (verified against live DOM 2026-05-25)
+  loginInput: 'input[name="username_or_email"], input[autocomplete="username"], input[name="text"]',
+  passwordInput: 'input[name="password"], input[autocomplete="current-password"]',
+  loginButton: 'button[data-testid="LoginForm_Login_Button"], button[role="button"]:has-text("Log in")',
 
   // Logged-in indicators
   newTweetButton: 'a[data-testid="SideNav_NewTweet_Button"]',
