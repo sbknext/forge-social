@@ -25,8 +25,36 @@ import type { Platform } from '../types.js';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+/**
+ * Abortable sleep: resolves early when `signal` fires (e.g. SIGINT sets stopping).
+ * The returned promise always resolves (never rejects) so callers need no try/catch.
+ */
+function sleep(ms: number, signal?: { aborted: boolean; onAbort: (cb: () => void) => void }): Promise<void> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(resolve, ms);
+    if (signal) {
+      signal.onAbort(() => {
+        clearTimeout(timer);
+        resolve();
+      });
+    }
+  });
+}
+
+/** Simple one-shot abort signal used to wake the inter-iteration sleep on SIGINT. */
+function makeAbortSignal(): { aborted: boolean; abort: () => void; onAbort: (cb: () => void) => void } {
+  let aborted = false;
+  const listeners: Array<() => void> = [];
+  return {
+    get aborted() { return aborted; },
+    abort() {
+      if (!aborted) {
+        aborted = true;
+        for (const cb of listeners) cb();
+      }
+    },
+    onAbort(cb: () => void) { listeners.push(cb); },
+  };
 }
 
 /** Send a Telegram alert if TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID are configured. */
@@ -83,11 +111,20 @@ export async function daemon(opts: DaemonOptions): Promise<void> {
   const intervalMs = (opts.intervalSec ?? 60) * 1000;
   const dryRun = opts.dryRun ?? false;
   let stopping = false;
+  const sleepAbort = makeAbortSignal();
 
+  // First SIGINT: set stopping flag + wake any in-progress sleep so Ctrl-C feels
+  // responsive. The while (!stopping) check handles the actual exit — no process.exit.
   process.once('SIGINT', () => {
-    console.log('\n[daemon] Caught SIGINT — daemon stopping');
+    console.log('\n[daemon] Caught SIGINT — finishing current iteration, then stopping…');
     stopping = true;
-    process.exit(0);
+    sleepAbort.abort();
+
+    // Second SIGINT escape hatch: user really wants out immediately.
+    process.once('SIGINT', () => {
+      console.log('\n[daemon] Second SIGINT — force exit');
+      process.exit(130);
+    });
   });
 
   console.log(
@@ -171,6 +208,6 @@ export async function daemon(opts: DaemonOptions): Promise<void> {
     }
 
     console.log(`[daemon] Sleeping ${opts.intervalSec ?? 60}s...`);
-    await sleep(intervalMs);
+    await sleep(intervalMs, sleepAbort);
   }
 }
