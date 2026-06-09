@@ -1,4 +1,4 @@
-export type Platform = 'x' | 'instagram';
+export type Platform = 'x' | 'instagram' | 'linkedin' | 'bluesky' | 'mastodon' | 'devto';
 
 export interface PlatformConfig {
   daily_cap: number;
@@ -6,7 +6,26 @@ export interface PlatformConfig {
   max_delay_sec: number;
 }
 
-export interface Config {
+export interface EngageConfig {
+  /** Master switch — all engagement is OFF unless this is true. Default: false. */
+  engage_enabled?: boolean;
+  /** Auto-like replies/mentions/likes received. Default: true when engagement on. */
+  engage_like?: boolean;
+  /** Auto-follow back new followers. Default: true when engagement on. */
+  engage_follow_back?: boolean;
+  /**
+   * Auto-reply to mentions/replies using a template.
+   * HIGHEST RISK — opt-in only. Default: false.
+   * Review platform ToS before enabling.
+   */
+  engage_reply_enabled?: boolean;
+  /** Reply templates. {handle} and {name} are substituted. */
+  engage_reply_templates?: string[];
+  /** Max engagement actions per day across all action types. Default: 20. */
+  engage_daily_cap?: number;
+}
+
+export interface Config extends EngageConfig {
   platforms: Record<Platform, PlatformConfig>;
   active_hours: [number, number];
   active_tz: string;

@@ -8,6 +8,11 @@ import { validateImage } from '../core/image.js';
 import { getEnv } from '../core/env.js';
 import { XAdapter } from '../platforms/x/index.js';
 import { InstagramAdapter } from '../platforms/instagram/index.js';
+import { LinkedInAdapter } from '../platforms/linkedin/index.js';
+import { BlueskyAdapter } from '../platforms/bluesky/index.js';
+import { MastodonAdapter } from '../platforms/mastodon/index.js';
+import { DevtoAdapter } from '../platforms/devto/index.js';
+import { loadBrand, renderBrand } from '../core/brand.js';
 import type { PlatformAdapter, PostContent } from '../types.js';
 
 interface PostOptions {
@@ -19,11 +24,15 @@ interface PostOptions {
 }
 
 export async function post(opts: PostOptions): Promise<void> {
+  // Render brand placeholders in post text
+  const brand = loadBrand();
+  opts = { ...opts, text: renderBrand(opts.text, brand) };
+
   const config = loadConfig();
   const db = getDb();
 
   const platforms: Platform[] =
-    opts.platform === 'all' ? ['x', 'instagram'] : [opts.platform];
+    opts.platform === 'all' ? ['x', 'instagram', 'linkedin', 'bluesky', 'mastodon', 'devto'] : [opts.platform];
 
   for (let i = 0; i < platforms.length; i++) {
     const platform = platforms[i];
@@ -78,7 +87,13 @@ async function postToPlatform(
     tags: opts.tags,
   };
 
-  const adapter: PlatformAdapter = platform === 'x' ? new XAdapter() : new InstagramAdapter();
+  const adapter: PlatformAdapter =
+    platform === 'x' ? new XAdapter()
+    : platform === 'instagram' ? new InstagramAdapter()
+    : platform === 'linkedin' ? new LinkedInAdapter()
+    : platform === 'bluesky' ? new BlueskyAdapter()
+    : platform === 'mastodon' ? new MastodonAdapter()
+    : new DevtoAdapter();
 
   // Verify logged in
   const spinner = ora('Checking session...').start();

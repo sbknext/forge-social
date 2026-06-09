@@ -25,5 +25,6 @@ export function forgePaths() {
     inbox: join(home, 'inbox'),
     profileX: profileDir('x'),
     profileIg: profileDir('instagram'),
+    profileLinkedIn: profileDir('linkedin'),
   };
 }

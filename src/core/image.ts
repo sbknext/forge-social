@@ -16,6 +16,23 @@ const CONSTRAINTS: Record<Platform, ImageConstraints> = {
     maxBytes: 30 * 1024 * 1024, // 30MB
     formats: ['.jpg', '.jpeg', '.png', '.heic', '.heif'],
   },
+  linkedin: {
+    maxBytes: 100 * 1024 * 1024, // 100MB (LinkedIn allows large images)
+    formats: ['.jpg', '.jpeg', '.png', '.gif'],
+  },
+  // API platforms — image upload not yet implemented; use same generous defaults.
+  bluesky: {
+    maxBytes: 1 * 1024 * 1024, // 1MB (AT Protocol image blob limit)
+    formats: ['.jpg', '.jpeg', '.png', '.webp'],
+  },
+  mastodon: {
+    maxBytes: 8 * 1024 * 1024, // 8MB (Mastodon default)
+    formats: ['.jpg', '.jpeg', '.png', '.gif', '.webp'],
+  },
+  devto: {
+    maxBytes: 25 * 1024 * 1024, // 25MB (Dev.to cover image)
+    formats: ['.jpg', '.jpeg', '.png', '.gif', '.webp'],
+  },
 };
 
 export interface ImageValidationResult {
