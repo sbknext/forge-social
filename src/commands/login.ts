@@ -19,7 +19,8 @@ function makeAdapter(platform: Platform) {
   if (platform === 'linkedin') return new LinkedInAdapter();
   if (platform === 'bluesky') return new BlueskyAdapter();
   if (platform === 'mastodon') return new MastodonAdapter();
-  return new DevtoAdapter();
+  if (platform === 'devto') return new DevtoAdapter();
+  throw new Error(`Unknown platform: ${platform}`);
 }
 
 /** Return the env-var key(s) required for this platform, or null for API platforms. */

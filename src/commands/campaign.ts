@@ -53,7 +53,7 @@ export async function campaignList(file: string): Promise<void> {
     }
 
     // Preview: first 120 chars
-    const preview = rendered.text.replace(/\\n/g, ' ').slice(0, 120);
+    const preview = rendered.text.replace(/\n/g, ' ').slice(0, 120);
     console.log(chalk.white(`    ${preview}${rendered.text.length > 120 ? '…' : ''}`));
 
     if (rendered.tags.length > 0) {
@@ -254,14 +254,15 @@ async function livePost({
 
   // Bluesky: 300-grapheme hard limit — truncate with warning if over.
   if (platform === 'bluesky') {
-    const graphemes =
-      typeof Intl !== 'undefined' && 'Segmenter' in Intl
+    const hasSegmenter = typeof Intl !== 'undefined' && 'Segmenter' in Intl;
+    const graphemes = hasSegmenter
         ? [...new Intl.Segmenter().segment(composedText)].length
         : composedText.length;
     if (graphemes > BLUESKY_MAX) {
       console.log(chalk.yellow(`  ⚠ [${post.id}] bluesky text ${graphemes} graphemes > ${BLUESKY_MAX} limit — truncated`));
-      const segs = [...new Intl.Segmenter().segment(composedText)].slice(0, BLUESKY_MAX - 1);
-      composedText = segs.map((s) => s.segment).join('') + '…';
+      composedText = hasSegmenter
+        ? [...new Intl.Segmenter().segment(composedText)].slice(0, BLUESKY_MAX - 1).map((s) => s.segment).join('') + '…'
+        : composedText.slice(0, BLUESKY_MAX - 1) + '…';
     }
   }
 
