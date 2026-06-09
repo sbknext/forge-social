@@ -1,7 +1,9 @@
 import type { Page } from 'playwright';
 import type { Platform } from '../types.js';
+import { LI_CHECKPOINT_URL_PATTERNS, LI_CAPTCHA_SELECTORS } from '../platforms/linkedin/selectors.js';
 
 // URL substrings that indicate captcha / challenge / auth wall
+// API platforms (bluesky, mastodon, devto) have no browser-based captcha — empty arrays.
 const CAPTCHA_URL_PATTERNS: Record<Platform, string[]> = {
   x: [
     '/account_access_step',
@@ -16,9 +18,14 @@ const CAPTCHA_URL_PATTERNS: Record<Platform, string[]> = {
     '/accounts/suspended',
     '/accounts/disabled',
   ],
+  linkedin: [...LI_CHECKPOINT_URL_PATTERNS],
+  bluesky: [],
+  mastodon: [],
+  devto: [],
 };
 
 // Selectors that indicate a challenge form is visible
+// API platforms have no browser session — empty arrays.
 const CAPTCHA_SELECTORS: Record<Platform, string[]> = {
   x: [
     'iframe[src*="arkose"]',
@@ -30,6 +37,10 @@ const CAPTCHA_SELECTORS: Record<Platform, string[]> = {
     'input[name="security_code"]',
     'button[value="0"]', // "It was me" / "Not me" buttons
   ],
+  linkedin: [...LI_CAPTCHA_SELECTORS],
+  bluesky: [],
+  mastodon: [],
+  devto: [],
 };
 
 export interface CaptchaResult {

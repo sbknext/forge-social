@@ -1,0 +1,275 @@
+{
+  "name": "echo-forge-launch",
+  "description": "Drip campaign for two products: echo-ai (smart AI chat with provider tiers) and forge (solo-dev OSS CLI tooling built in the open). Authentic build-in-public tone, dev audience.",
+  "posts": [
+    {
+      "id": "echo-problem-1",
+      "platforms": [
+        "x",
+        "linkedin",
+        "bluesky",
+        "mastodon",
+        "devto"
+      ],
+      "text": "GPT-4o for every message is wasteful. Gemini Flash for every message misses nuance.\n\necho-ai auto-routes: Flash for quick lookups, Pro for reasoning, Deep for research. Right model, right cost, every time.\n\n{echo_url} #AItools #buildinpublic",
+      "tags": [
+        "AItools",
+        "buildinpublic",
+        "indiedev"
+      ]
+    },
+    {
+      "id": "echo-tiers-1",
+      "platforms": [
+        "x",
+        "bluesky",
+        "mastodon"
+      ],
+      "text": "echo-ai has 4 tiers:\n\n⚡ Flash — fast + cheap\n🧠 Think — reasoning\n🔬 Pro — quality\n🌊 Deep — research mode\n\nAuto-routes per query. No manual model-switching.\n\n{echo_url} #AItools #devtools",
+      "tags": [
+        "AItools",
+        "devtools"
+      ]
+    },
+    {
+      "id": "echo-tiers-instagram",
+      "platforms": [
+        "instagram"
+      ],
+      "text": "Why I built echo-ai with 4 provider tiers instead of one model:\n\nFlash: instant answers, pennies per query\nThink: multi-step reasoning\nPro: polished, high-quality output\nDeep: long-context research mode\n\nThe system picks the tier for you based on what you're actually asking. No settings to fiddle with.\n\nLink in bio → {echo_url}\n\n#AItools #buildinpublic #indiehackers #devtools #artificialintelligence #machinelearning #solodev #productdesign",
+      "tags": [
+        "AItools",
+        "buildinpublic",
+        "indiehackers",
+        "devtools",
+        "artificialintelligence",
+        "machinelearning",
+        "solodev"
+      ]
+    },
+    {
+      "id": "echo-cost-angle",
+      "platforms": [
+        "x"
+      ],
+      "text": "Most AI chat apps send every message to the most expensive model.\n\necho-ai doesn't. Auto-routing cuts costs without cutting quality.\n\n{echo_url} #AItools #buildinpublic",
+      "tags": [
+        "AItools",
+        "buildinpublic"
+      ]
+    },
+    {
+      "id": "echo-build-lesson",
+      "platforms": [
+        "x",
+        "linkedin"
+      ],
+      "text": "Lesson from building echo-ai: the hardest part wasn't the AI. It was deciding when NOT to use the big expensive model.\n\nAuto-routing logic took longer to tune than the UI. Still worth it.\n\n{echo_url} #buildinpublic #AItools",
+      "tags": [
+        "buildinpublic",
+        "AItools",
+        "indiedev"
+      ]
+    },
+    {
+      "id": "echo-cta-instagram",
+      "platforms": [
+        "instagram"
+      ],
+      "text": "echo-ai — AI chat that thinks about which model to use before it answers.\n\nFlash for speed. Deep for research. The right tier chosen automatically.\n\nBuilt solo. No VC. No hype. Just a tool I wanted to exist.\n\nTry it: {echo_url}\n\n#buildinpublic #indiehackers #AItools #solodev #openai #llm #aiproductivity #techproduct",
+      "tags": [
+        "buildinpublic",
+        "indiehackers",
+        "AItools",
+        "solodev",
+        "llm",
+        "aiproductivity"
+      ]
+    },
+    {
+      "id": "echo-provider-choice",
+      "platforms": [
+        "x"
+      ],
+      "text": "echo-ai supports multiple providers behind the scenes — not vendor lock-in.\n\nIf one goes down or gets expensive, the routing layer absorbs it.\n\nThat's the point of tiers. {echo_url} #AItools #devtools",
+      "tags": [
+        "AItools",
+        "devtools"
+      ]
+    },
+    {
+      "id": "forge-intro-1",
+      "platforms": [
+        "x",
+        "linkedin"
+      ],
+      "text": "forge: a family of small CLI tools for solo devs.\n\nforge-linkedin, forge-social — real browser automation, no stored passwords, conservative daily caps.\n\nBuilt in the open. {forge_url} #opensource #buildinpublic #devtools",
+      "tags": [
+        "opensource",
+        "buildinpublic",
+        "devtools",
+        "indiedev"
+      ]
+    },
+    {
+      "id": "forge-philosophy",
+      "platforms": [
+        "x"
+      ],
+      "text": "forge-* philosophy:\n\n- no passwords in repo\n- conservative caps (don't get banned)\n- real browser (works like a human)\n- one tool, one job\n\nNot a growth hack. A pace tool. {forge_url} #devtools #opensource",
+      "tags": [
+        "devtools",
+        "opensource",
+        "buildinpublic"
+      ]
+    },
+    {
+      "id": "forge-linkedin-intro",
+      "platforms": [
+        "instagram"
+      ],
+      "text": "forge-linkedin: automate LinkedIn at a safe, human pace.\n\nNo puppeteer tricks. Actual Chrome session. Connect, view, message — within daily limits that won't get your account flagged.\n\nSolo-built. Open source. {forge_url}\n\n#devtools #opensource #buildinpublic #indiehackers #solodev #linkedinmarketing #automation #nodejs",
+      "tags": [
+        "devtools",
+        "opensource",
+        "buildinpublic",
+        "indiehackers",
+        "solodev",
+        "automation",
+        "nodejs"
+      ]
+    },
+    {
+      "id": "forge-safe-pace",
+      "platforms": [
+        "x"
+      ],
+      "text": "\"safe-pace\" is the core constraint for forge-*.\n\nEvery tool ships with daily_cap, min_delay, max_delay baked in.\n\nSlow is sustainable. Fast gets you banned. {forge_url} #devtools #buildinpublic",
+      "tags": [
+        "devtools",
+        "buildinpublic",
+        "opensource"
+      ]
+    },
+    {
+      "id": "forge-mcp-angle",
+      "platforms": [
+        "x",
+        "linkedin"
+      ],
+      "text": "forge tools expose an MCP interface so AI agents can orchestrate them.\n\nYour Claude/Cursor session can trigger a post or a connection request via tool call.\n\nDetails: {mcp_url} #devtools #MCP #AIagents",
+      "tags": [
+        "devtools",
+        "MCP",
+        "AIagents",
+        "buildinpublic"
+      ]
+    },
+    {
+      "id": "forge-oss-ethos",
+      "platforms": [
+        "instagram"
+      ],
+      "text": "Why open source?\n\nBecause the best tools I've used were built by someone who needed them first.\n\nforge-* is my attempt at that. Small, sharp, safe-pace CLI tools. Nothing I wouldn't use myself daily.\n\nStar + follow along: {forge_url}\n\n#opensource #buildinpublic #indiehackers #solodev #devtools #programming #softwareengineering #makerlog",
+      "tags": [
+        "opensource",
+        "buildinpublic",
+        "indiehackers",
+        "solodev",
+        "devtools",
+        "makerlog"
+      ]
+    },
+    {
+      "id": "forge-social-intro",
+      "platforms": [
+        "x"
+      ],
+      "text": "forge-social: post to X + Instagram at a safe pace from the CLI.\n\nNo API keys. Real Chrome session. Rate-limited by design.\n\nBuilding it in the open — {forge_url} #devtools #buildinpublic #opensource",
+      "tags": [
+        "devtools",
+        "buildinpublic",
+        "opensource"
+      ]
+    },
+    {
+      "id": "bip-solo-dev-ethos",
+      "platforms": [
+        "all"
+      ],
+      "text": "Solo dev thesis: ship small tools that do one thing well.\n\necho-ai auto-routes AI providers. forge-* automates social at human pace.\n\nNo team. No funding. Just usefulness. {forge_url} | {echo_url} #buildinpublic #indiehackers #solodev",
+      "tags": [
+        "buildinpublic",
+        "indiehackers",
+        "solodev",
+        "devtools",
+        "AItools"
+      ]
+    },
+    {
+      "id": "bip-weeklog-1",
+      "platforms": [
+        "x",
+        "linkedin"
+      ],
+      "text": "This week in the forge-* build:\n\n→ campaign engine for echo-ai + forge posts\n→ placeholder system so URLs aren't hardcoded\n→ 359 tests green\n\nSlow is steady. {forge_url} #buildinpublic #devlog",
+      "tags": [
+        "buildinpublic",
+        "devlog",
+        "opensource",
+        "indiedev"
+      ]
+    },
+    {
+      "id": "bip-two-products",
+      "platforms": [
+        "instagram"
+      ],
+      "text": "Two products, one dev:\n\necho-ai — smarter AI chat via auto-routing across provider tiers\nforge — safe-pace CLI tools for social + networking, built in the open\n\nBoth solve problems I had. Both built without a team.\n\nFollow along: {echo_url} | {forge_url}\n\n#buildinpublic #indiehackers #solodev #devtools #AItools #makerlog #indiemaker #sideproject",
+      "tags": [
+        "buildinpublic",
+        "indiehackers",
+        "solodev",
+        "devtools",
+        "AItools",
+        "makerlog",
+        "indiemaker"
+      ]
+    },
+    {
+      "id": "bip-lesson-automation",
+      "platforms": [
+        "x"
+      ],
+      "text": "Real lesson from building forge-social:\n\nDon't optimise for speed. Optimise for not getting banned.\n\nHuman-pace automation lasts. Aggressive automation gets accounts nuked.\n\n{forge_url} #buildinpublic #devtools",
+      "tags": [
+        "buildinpublic",
+        "devtools",
+        "automation"
+      ]
+    },
+    {
+      "id": "echo-deep-mode",
+      "platforms": [
+        "x"
+      ],
+      "text": "echo-ai's Deep tier: long-context research mode.\n\nWhen you need a real answer, not a fast one. Routes to the best available model for the task.\n\n{echo_url} #AItools #devtools",
+      "tags": [
+        "AItools",
+        "devtools"
+      ]
+    },
+    {
+      "id": "forge-handle-cta",
+      "platforms": [
+        "x"
+      ],
+      "text": "Building forge-* in the open. Following along costs nothing.\n\nX: {x_handle}\nIG: {ig_handle}\n\nAll code + posts: {forge_url} #buildinpublic #opensource #solodev",
+      "tags": [
+        "buildinpublic",
+        "opensource",
+        "solodev"
+      ]
+    }
+  ]
+}

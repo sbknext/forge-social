@@ -17,7 +17,7 @@ export async function dryRun(opts: DryRunOptions): Promise<void> {
   const db = getDb();
 
   const platforms: Platform[] =
-    opts.platform === 'all' ? ['x', 'instagram'] : [opts.platform];
+    opts.platform === 'all' ? ['x', 'instagram', 'linkedin', 'bluesky', 'mastodon', 'devto'] : [opts.platform];
 
   console.log(chalk.bold.cyan('[dry-run] No browser will be opened.\n'));
 
