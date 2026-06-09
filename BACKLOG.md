@@ -21,72 +21,79 @@ Items already fixed or noted as false positives are excluded.
 
 ## Open items
 
-### P1 — Fix soon (requires live Bluesky / Mastodon test)
+### P1 — FIXED
 
-**[engage] Auto-LIKE self-likes own post** (`src/commands/engage.ts:199`)
-- Source: Greptile P1
-- For a `like` notification, `item.subjectUri` is the URI of *your* post (the subject the liker acted on), so `bskyLike(...subjectUri)` self-likes your own content.
-  Same issue in the Mastodon runner (~line 284): `mastoFavourite(...subjectUri)` self-favourites.
-- Fix: like the liker's content or skip self-like; do not pass `subjectUri` as the target.
-- Future PR: `fix(engage): resolve self-like on Bluesky and Mastodon`
-
----
-
-### P2
-
-**[engage] Bluesky reply mis-threads** (`src/commands/engage.ts:213`)
-- Source: Greptile P2
-- AT Protocol requires `reply.root` to be the thread root, not the immediate parent.
-  Currently `rootUri = item.subjectUri` and `parentUri = item.subjectUri` — both set to parent.
-- Fix: track/fetch the actual thread root URI for `reply.root`.
-- Future PR: `fix(engage): set correct reply.root per AT Protocol`
-
-**[scripts] Hardcoded macOS default in sync script** (`scripts/sync-forge-linkedin.sh:32`)
-- Source: Greptile P2
-- `FORGE_LINKEDIN_PATH` defaults to a developer macOS path; non-portable.
-- Fix: require the argument; error out with a usage message if absent.
-- Future PR: `fix(scripts): require FORGE_LINKEDIN_PATH arg, remove hardcoded default`
+**[engage] Auto-LIKE self-likes own post** (`src/commands/engage.ts`)
+- [x] Fixed: for `like`-kind notifications (Bluesky and Mastodon) the `like` action
+  is now skipped — `subjectUri` is YOUR post (the subject the liker acted on), so
+  favouriting it would self-like. No AT Protocol field reliably identifies the liker's
+  own content from a `like` notification, so the safest fix is to skip.
+  Added `// NOTE: needs live Bluesky/Mastodon verification` comments in both runners.
 
 ---
 
-### Major
+### P2 — FIXED
 
-**[render] Fallback writeFile not guarded** (`src/core/render.ts:155`)
-- `fallback writeFile` can throw despite the documented "NEVER throws" contract.
-- Fix: wrap in `try/catch`; log and swallow.
+**[engage] Bluesky reply mis-threads** (`src/commands/engage.ts`)
+- [x] Fixed: `EngagementItem` now carries `rootUri`/`rootCid` populated from
+  `record.reply.root` when the Bluesky notification carries reply context, falling back
+  to `subjectUri`/`subjectCid` when the subject is a top-level post (where parent = root).
+  The reply builder now passes `item.rootUri`/`item.rootCid` as `rootUri`/`rootCid` and
+  `item.subjectUri`/`item.subjectCid` as `parentUri`/`parentCid`.
+  Limitation noted in comment: `mention` notifications without embedded reply context
+  may still mis-thread deeply nested mentions; full accuracy requires a `getPostThread` fetch.
+  Added `// NOTE: needs live Bluesky/Mastodon verification` comment.
 
-**[doctorCmd] loadBrand() not wrapped** (`src/commands/doctorCmd.ts:102`)
-- `loadBrand()` called without try-catch (unlike `loadConfig`); a throw crashes the doctor command.
-- Fix: wrap in try-catch, surface as a diagnostic warning rather than an unhandled error.
+**[scripts] Hardcoded macOS default in sync script** (`scripts/sync-forge-linkedin.sh`)
+- [x] Fixed: removed hardcoded `/Users/sam/Documents/saas/forge-linkedin` default.
+  `FORGE_LINKEDIN_PATH` is now required; script errors out with a usage message if absent.
 
-**[engagement] Duplicate `EngageConfig` interface** (`src/core/engagement.ts:80`)
-- A second `EngageConfig` interface defined here conflicts with the differently-shaped one in `src/types.ts`.
-- Fix: remove duplicate; import from `src/types.ts` consistently.
+---
 
-**[post] Inline adapter selection duplicates makeAdapter** (`src/commands/post.ts:96`)
-- Adapter selection logic in `post.ts` duplicates `makeAdapter` from `login.ts`.
-- Fix: extract shared `src/core/adapters.ts` factory; import in both commands.
+### Major — FIXED
 
-**[devto] Token-validation fetch has no timeout** (`src/platforms/devto/index.ts:46`)
-- Can hang login indefinitely on an unresponsive Dev.to endpoint.
-- Fix: add `AbortController` with a reasonable timeout (e.g. 10 s).
+**[render] Fallback writeFile not guarded** (`src/core/render.ts`)
+- [x] Fixed: SVG fallback `writeFile` is now wrapped in try/catch. On failure, logs to
+  stderr and returns the error-result (ok: false) without throwing, honouring the
+  documented "NEVER throws" contract.
 
-**[mastodon] normalizeInstanceUrl accepts http://** (`src/platforms/mastodon/client.ts:26`)
-- Tokens transmitted over plain HTTP.
-- Fix: enforce `https://`; reject or upgrade `http://` instances.
+**[doctorCmd] loadBrand() not wrapped** (`src/commands/doctorCmd.ts`)
+- [x] Fixed: `loadBrand()` is now wrapped in try/catch. A throw is captured as
+  `brandError`, passed to `runDoctorChecks`, and surfaced as a note in the doctor
+  report instead of crashing the command.
+
+**[engagement] Duplicate `EngageConfig` interface** (`src/core/engagement.ts`)
+- [x] Fixed: renamed the runtime-shaped interface to `EngageRuntimeConfig`.
+  Added `export type EngageConfig = EngageRuntimeConfig` for backwards-compat imports
+  (existing test imports of `EngageConfig` continue to work).
+  `decideAction` signature updated to use `EngageRuntimeConfig`.
+  `engage.ts` updated to import `EngageRuntimeConfig`.
+
+**[post] Inline adapter selection duplicates makeAdapter** (`src/commands/post.ts`)
+- [x] Fixed: extracted `src/core/adapters.ts` with a single `makeAdapter(platform)`
+  factory. Both `login.ts` and `post.ts` now import from there; all per-platform
+  adapter imports removed from those files.
+
+**[devto] Token-validation fetch has no timeout** (`src/platforms/devto/index.ts`)
+- [x] Fixed: added `AbortController` with a 10 s timeout. Throws
+  `"Dev.to token validation timed out after 10 s"` on abort; clears timer in finally.
+
+**[mastodon] normalizeInstanceUrl accepts http://** (`src/platforms/mastodon/client.ts`)
+- [x] Fixed: `http://` is now rejected with a descriptive error. Bare hostnames are
+  assumed `https://`. Updated `tests/mastodon.test.ts` to assert on the throw.
 
 **[package.json] @napi-rs/canvas pinned to old major** (`package.json:24`)
-- `^0.1.53` pinned; latest stable is `1.0.0` (major bump).
-- Evaluate upgrade — it is an `optionalDependency`, so a test in CI with the new version is low risk.
+- [ ] DEFERRED: `^0.1.53` → `1.0.0` is a major bump. Needs separate evaluation —
+  check breaking changes in changelog, verify canvas API compatibility with current
+  usage in `src/core/render.ts`. Low-risk (optionalDependency) but out of scope here.
 
 ---
 
-### Minor
+### Minor — FIXED
 
-**[doctor] Brand value check misses null/undefined** (`src/core/doctor.ts:92`)
-- `=== ''` check misses `null`/`undefined` values.
-- Fix: use `!value`.
+**[doctor] Brand value check misses null/undefined** (`src/core/doctor.ts`)
+- [x] Fixed: `=== ''` replaced with `!value` to catch null/undefined.
 
-**[bluesky] Misleading "No-op" comment** (`src/platforms/bluesky/index.ts:56`)
-- Comment says "No-op when credentials absent" but the code throws.
-- Fix: update comment to reflect actual behavior.
+**[bluesky] Misleading "No-op" comment** (`src/platforms/bluesky/index.ts`)
+- [x] Fixed: comment updated to accurately describe the throw behaviour when
+  credentials are absent.

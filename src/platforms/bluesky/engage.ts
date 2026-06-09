@@ -84,6 +84,11 @@ export async function listNotifications(
     const subjectUri = n.record.subject?.uri ?? n.uri;
     const subjectCid = n.record.subject?.cid ?? n.cid;
 
+    // Thread root: use record.reply.root when present (reply notifications carry this).
+    // Fall back to subjectUri/subjectCid when absent — valid when the subject IS the root.
+    const rootUri = n.record.reply?.root.uri ?? subjectUri;
+    const rootCid = n.record.reply?.root.cid ?? subjectCid;
+
     return {
       id: n.uri,
       kind: reasonToKind(n.reason),
@@ -91,6 +96,8 @@ export async function listNotifications(
       authorId: n.author.did,
       subjectUri,
       subjectCid,
+      rootUri,
+      rootCid,
       text: n.record.text ?? '',
       createdAtIso: n.indexedAt,
     };

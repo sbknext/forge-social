@@ -25,7 +25,7 @@ import {
   canAct,
   dedupKey,
   renderReply,
-  type EngageConfig,
+  type EngageRuntimeConfig,
 } from '../core/engagement.js';
 import { createSession } from '../platforms/bluesky/client.js';
 import {
@@ -94,8 +94,8 @@ export async function engage(opts: EngageOpts): Promise<void> {
     return;
   }
 
-  // Build EngageConfig from loaded config
-  const engageCfg: EngageConfig = {
+  // Build EngageRuntimeConfig from loaded config
+  const engageCfg: EngageRuntimeConfig = {
     likeEnabled: config.engage_like ?? true,
     followBackEnabled: config.engage_follow_back ?? true,
     replyEnabled: config.engage_reply_enabled ?? false,
@@ -125,7 +125,7 @@ export async function engage(opts: EngageOpts): Promise<void> {
 // ── Bluesky runner ────────────────────────────────────────────────────────────
 
 async function runBluesky(ctx: {
-  engageCfg: EngageConfig;
+  engageCfg: EngageRuntimeConfig;
   templates: string[];
   dryRun: boolean;
   max: number | undefined;
@@ -189,15 +189,34 @@ async function runBluesky(ctx: {
     try {
       const now = new Date().toISOString();
       if (action === 'like') {
+        // NOTE: needs live Bluesky/Mastodon verification
+        //
+        // P1 fix: for a 'like' notification, item.subjectUri is YOUR post (the one the liker
+        // acted on), not the liker's content. Liking subjectUri would self-like your own post.
+        // There is no reliable AT Protocol field to target the liker's own post from a like
+        // notification, so skip the like action for like-kind notifications.
+        if (item.kind === 'like') {
+          console.log(chalk.dim(`  skip [no-target-for-like-notif] like from ${item.authorHandle}`));
+          summary.skipped++;
+          continue;
+        }
         await bskyLike(pds, accessJwt, did, item.subjectUri, item.subjectCid, now);
         console.log(chalk.green(`  liked — ${item.kind} from ${item.authorHandle}`));
       } else if (action === 'follow-back') {
         await bskyFollow(pds, accessJwt, did, item.authorId, now);
         console.log(chalk.green(`  followed — ${item.authorHandle}`));
       } else if (action === 'reply' && engageCfg.replyEnabled) {
-        // Build reply: root = item root (or subject if follow root), parent = item subject
-        const rootUri = item.subjectUri;
-        const rootCid = item.subjectCid;
+        // NOTE: needs live Bluesky/Mastodon verification
+        //
+        // P2 fix: AT Protocol requires reply.root to be the thread root, not the immediate
+        // parent. item.rootUri/rootCid are populated from record.reply.root when the
+        // notification carries reply context; they fall back to subjectUri/subjectCid when
+        // the notification is a direct top-level reply (parent IS the root).
+        // Limitation: for 'mention' notifications the record may not carry reply context,
+        // so rootUri may equal subjectUri — this is correct for top-level mentions but
+        // may mis-thread deeply nested mentions. Full accuracy requires a getPostThread fetch.
+        const rootUri = item.rootUri;
+        const rootCid = item.rootCid;
         const parentUri = item.subjectUri;
         const parentCid = item.subjectCid;
         const text = renderReply(pickTemplate(templates), {
@@ -219,7 +238,7 @@ async function runBluesky(ctx: {
 // ── Mastodon runner ───────────────────────────────────────────────────────────
 
 async function runMastodon(ctx: {
-  engageCfg: EngageConfig;
+  engageCfg: EngageRuntimeConfig;
   templates: string[];
   dryRun: boolean;
   max: number | undefined;
@@ -271,6 +290,16 @@ async function runMastodon(ctx: {
 
     try {
       if (action === 'like') {
+        // NOTE: needs live Bluesky/Mastodon verification
+        //
+        // P1 fix: for a 'favourite' (like) notification, item.subjectUri is YOUR status
+        // (the one the user acted on), not the liker's content. Favouriting subjectUri
+        // would self-favourite your own post. Skip like action for like-kind notifications.
+        if (item.kind === 'like') {
+          console.log(chalk.dim(`  skip [no-target-for-like-notif] like from ${item.authorHandle}`));
+          summary.skipped++;
+          continue;
+        }
         if (!item.subjectUri) {
           summary.skipped++;
           continue;

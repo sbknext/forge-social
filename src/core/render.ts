@@ -145,12 +145,19 @@ export async function rasterizeSvgToPng(
 
   // ---------------------------------------------------------------------------
   // Degrade: write SVG next to the requested PNG path.
+  // NEVER throws — contract documented in JSDoc above.
   // ---------------------------------------------------------------------------
   const ext = extname(outPath);                          // '.png' (or whatever)
   const base = basename(outPath, ext);                   // stem
   const svgPath = `${dir}/${base}.svg`;
 
-  await writeFile(svgPath, svg, 'utf-8');
+  try {
+    await writeFile(svgPath, svg, 'utf-8');
+  } catch (err) {
+    const hint = err instanceof Error ? err.message : String(err);
+    process.stderr.write(`[render] SVG fallback write failed: ${hint}\n`);
+    return { ok: false, wrote: 'svg', path: svgPath };
+  }
 
   return { ok: false, wrote: 'svg', path: svgPath };
 }

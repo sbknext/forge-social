@@ -44,7 +44,8 @@ export class BlueskyAdapter implements PlatformAdapter {
 
   /**
    * Validates credentials by attempting a real createSession call.
-   * No-op when credentials are absent (error will surface on post).
+   * Throws immediately when credentials are absent (BLUESKY_HANDLE or
+   * BLUESKY_APP_PASSWORD not set) — callers should check isLoggedIn() first.
    */
   async login(_username?: string, _password?: string): Promise<void> {
     const creds = getCreds();

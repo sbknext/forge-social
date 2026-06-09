@@ -43,6 +43,10 @@ export type EngagementKind =
  *   authorId     — platform-native actor ID (Bluesky: DID, Mastodon: numeric account id)
  *   subjectUri   — URI of the subject post (AT URI or Mastodon status id)
  *   subjectCid   — Bluesky CID of the subject (empty string for non-AT platforms)
+ *   rootUri      — AT URI of the thread root post (Bluesky only; empty string otherwise).
+ *                  Populated from record.reply.root when the notification carries reply context;
+ *                  falls back to subjectUri when the subject IS the root (top-level post).
+ *   rootCid      — CID of the thread root post (Bluesky only; empty string otherwise).
  *   text         — post text if available (empty string when absent)
  *   createdAtIso — ISO 8601 timestamp of the notification
  */
@@ -54,6 +58,10 @@ export interface EngagementItem {
   authorId: string;
   subjectUri: string;
   subjectCid: string;
+  /** Thread root URI for AT Protocol replies. Empty string on non-Bluesky platforms. */
+  rootUri: string;
+  /** Thread root CID for AT Protocol replies. Empty string on non-Bluesky platforms. */
+  rootCid: string;
   text: string;
   createdAtIso: string;
 }
@@ -62,10 +70,13 @@ export interface EngagementItem {
 export type EngageAction = 'like' | 'reply' | 'follow-back' | 'skip';
 
 /**
- * Runtime-configurable engagement flags.
+ * Runtime-configurable engagement flags (normalised from Config).
  * All booleans default to false — engagement is off unless explicitly enabled.
+ *
+ * Named EngageRuntimeConfig to avoid collision with the config-file-shaped
+ * EngageConfig in src/types.ts which uses raw snake_case keys from JSON.
  */
-export interface EngageConfig {
+export interface EngageRuntimeConfig {
   /** Automatically like replies/mentions/likes received. */
   likeEnabled: boolean;
   /** Automatically follow back new followers. */
@@ -78,6 +89,9 @@ export interface EngageConfig {
   /** Maximum number of engagement actions per day (all action types combined). */
   dailyCap: number;
 }
+
+/** @deprecated Use EngageRuntimeConfig. Kept for backwards-compat imports during migration. */
+export type EngageConfig = EngageRuntimeConfig;
 
 // ── Decision logic ─────────────────────────────────────────────────────────────
 
@@ -102,7 +116,7 @@ export interface EngageConfig {
  *
  * Pure — no I/O, no Date calls, no state.
  */
-export function decideAction(item: EngagementItem, cfg: EngageConfig): EngageAction {
+export function decideAction(item: EngagementItem, cfg: EngageRuntimeConfig): EngageAction {
   if (item.kind === 'follow') {
     return cfg.followBackEnabled ? 'follow-back' : 'skip';
   }

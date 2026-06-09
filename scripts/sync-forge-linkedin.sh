@@ -10,7 +10,7 @@
 # Options:
 #   --apply    Write the ported selectors/logic into forge-social (default: diff-only)
 #
-# Default forge-linkedin path: /Users/sam/Documents/saas/forge-linkedin
+# PATH_TO_FORGE_LINKEDIN is required — no default to avoid non-portable assumptions.
 #
 # chmod note: after cloning forge-social run  chmod +x scripts/sync-forge-linkedin.sh
 #
@@ -29,7 +29,7 @@ set -euo pipefail
 # Argument parsing
 # ---------------------------------------------------------------------------
 APPLY=false
-FORGE_LINKEDIN_PATH="/Users/sam/Documents/saas/forge-linkedin"
+FORGE_LINKEDIN_PATH=""
 
 for arg in "$@"; do
   case "$arg" in
@@ -38,6 +38,12 @@ for arg in "$@"; do
     *) FORGE_LINKEDIN_PATH="$arg" ;;
   esac
 done
+
+if [[ -z "$FORGE_LINKEDIN_PATH" ]]; then
+  echo "ERROR: FORGE_LINKEDIN_PATH argument is required." >&2
+  echo "Usage: bash scripts/sync-forge-linkedin.sh [--apply] /path/to/forge-linkedin" >&2
+  exit 1
+fi
 
 # ---------------------------------------------------------------------------
 # Validate source

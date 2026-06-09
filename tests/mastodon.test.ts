@@ -45,8 +45,8 @@ describe('normalizeInstanceUrl', () => {
     expect(normalizeInstanceUrl('https://fosstodon.org')).toBe('https://fosstodon.org');
   });
 
-  it('preserves http:// scheme if explicitly provided', () => {
-    expect(normalizeInstanceUrl('http://local.dev')).toBe('http://local.dev');
+  it('throws on http:// to prevent token transmission over plain HTTP', () => {
+    expect(() => normalizeInstanceUrl('http://local.dev')).toThrow(/must use https/);
   });
 });
 

@@ -3,25 +3,10 @@ import ora from 'ora';
 import type { Platform } from '../types.js';
 import { getEnv } from '../core/env.js';
 import { getDb, setLastLogin } from '../core/db.js';
-import { XAdapter } from '../platforms/x/index.js';
-import { InstagramAdapter } from '../platforms/instagram/index.js';
-import { LinkedInAdapter } from '../platforms/linkedin/index.js';
-import { BlueskyAdapter } from '../platforms/bluesky/index.js';
-import { MastodonAdapter } from '../platforms/mastodon/index.js';
-import { DevtoAdapter } from '../platforms/devto/index.js';
+import { makeAdapter } from '../core/adapters.js';
 
 /** API-based platforms that use token/env-var auth — no browser session. */
 const API_PLATFORMS = new Set<Platform>(['bluesky', 'mastodon', 'devto']);
-
-function makeAdapter(platform: Platform) {
-  if (platform === 'x') return new XAdapter();
-  if (platform === 'instagram') return new InstagramAdapter();
-  if (platform === 'linkedin') return new LinkedInAdapter();
-  if (platform === 'bluesky') return new BlueskyAdapter();
-  if (platform === 'mastodon') return new MastodonAdapter();
-  if (platform === 'devto') return new DevtoAdapter();
-  throw new Error(`Unknown platform: ${platform}`);
-}
 
 /** Return the env-var key(s) required for this platform, or null for API platforms. */
 function credKeys(platform: Platform): { usernameKey: string; passwordKey: string } | null {

@@ -20,6 +20,8 @@ function makeItem(kind: EngagementItem['kind'], id = 'item-1'): EngagementItem {
     authorId: 'did:plc:alice',
     subjectUri: 'at://did:plc:alice/app.bsky.feed.post/abc123',
     subjectCid: 'bafyreidfabc',
+    rootUri: 'at://did:plc:alice/app.bsky.feed.post/abc123',
+    rootCid: 'bafyreidfabc',
     text: 'great post!',
     createdAtIso: '2026-06-03T10:00:00.000Z',
   };

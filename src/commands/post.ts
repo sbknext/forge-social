@@ -6,14 +6,9 @@ import { getDb, recordPost, incrementToday } from '../core/db.js';
 import { canRunNow, remainingQuota, randomDelay } from '../core/limiter.js';
 import { validateImage } from '../core/image.js';
 import { getEnv } from '../core/env.js';
-import { XAdapter } from '../platforms/x/index.js';
-import { InstagramAdapter } from '../platforms/instagram/index.js';
-import { LinkedInAdapter } from '../platforms/linkedin/index.js';
-import { BlueskyAdapter } from '../platforms/bluesky/index.js';
-import { MastodonAdapter } from '../platforms/mastodon/index.js';
-import { DevtoAdapter } from '../platforms/devto/index.js';
+import { makeAdapter } from '../core/adapters.js';
 import { loadBrand, renderBrand } from '../core/brand.js';
-import type { PlatformAdapter, PostContent } from '../types.js';
+import type { PostContent } from '../types.js';
 
 interface PostOptions {
   platform: Platform | 'all';
@@ -87,13 +82,7 @@ async function postToPlatform(
     tags: opts.tags,
   };
 
-  const adapter: PlatformAdapter =
-    platform === 'x' ? new XAdapter()
-    : platform === 'instagram' ? new InstagramAdapter()
-    : platform === 'linkedin' ? new LinkedInAdapter()
-    : platform === 'bluesky' ? new BlueskyAdapter()
-    : platform === 'mastodon' ? new MastodonAdapter()
-    : new DevtoAdapter();
+  const adapter = makeAdapter(platform);
 
   // Verify logged in
   const spinner = ora('Checking session...').start();

@@ -15,11 +15,21 @@ export interface MastodonCreds {
 
 /**
  * Normalises a Mastodon instance URL: ensures https:// scheme and no trailing slash.
- * Pure.
+ *
+ * Security: rejects http:// to prevent token transmission over plain HTTP.
+ * Bare hostnames (no scheme) are assumed https://.
+ *
+ * Throws if the caller explicitly passes an http:// URL.
+ * Pure (no I/O) except for the throw.
  */
 export function normalizeInstanceUrl(instance: string): string {
   let url = instance.trim();
-  if (!/^https?:\/\//i.test(url)) {
+  if (/^http:\/\//i.test(url)) {
+    throw new Error(
+      `Mastodon: instance URL must use https:// to protect your access token. Got: ${url}`
+    );
+  }
+  if (!/^https:\/\//i.test(url)) {
     url = `https://${url}`;
   }
   return url.replace(/\/+$/, '');

@@ -90,7 +90,13 @@ export async function doctor(opts: DoctorOptions = {}): Promise<void> {
   }
 
   // 4. Brand
-  const brand = loadBrand();
+  let brand: ReturnType<typeof loadBrand> | null = null;
+  let brandError: string | undefined;
+  try {
+    brand = loadBrand();
+  } catch (e) {
+    brandError = (e as Error).message;
+  }
 
   // 5. Run pure checks
   const report = runDoctorChecks({
@@ -98,7 +104,8 @@ export async function doctor(opts: DoctorOptions = {}): Promise<void> {
     configError,
     dbTables,
     platforms,
-    brand: brand as unknown as Record<string, string>,
+    brand: (brand ?? {}) as unknown as Record<string, string>,
+    brandError,
   });
 
   if (opts.json) {

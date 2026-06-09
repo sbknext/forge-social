@@ -82,6 +82,8 @@ export async function listNotifications(
     authorId: n.account.id,
     subjectUri: n.status?.id ?? '',
     subjectCid: '', // Mastodon has no CID concept
+    rootUri: '',   // Mastodon has no thread-root concept in the notification payload
+    rootCid: '',   // Mastodon has no CID concept
     text: n.status ? stripHtml(n.status.content) : '',
     createdAtIso: '', // Mastodon notification object lacks a top-level createdAt; set empty
   }));

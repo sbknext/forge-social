@@ -49,6 +49,8 @@ export interface DoctorInput {
   dbTables: string[];
   platforms: PlatformCredStatus[];
   brand: Record<string, string>;
+  /** Set when loadBrand() threw; surfaced as a note rather than crashing the command. */
+  brandError?: string;
 }
 
 /**
@@ -83,8 +85,12 @@ export function runDoctorChecks(input: DoctorInput): DoctorReport {
   const brandKeysSet: string[] = [];
   const brandKeysMissing: string[] = [];
 
+  if (input.brandError) {
+    notes.push(`Brand load error: ${input.brandError}`);
+  }
+
   for (const [key, value] of Object.entries(input.brand)) {
-    if (value === '') {
+    if (!value) {
       brandKeysMissing.push(key);
     } else {
       brandKeysSet.push(key);
